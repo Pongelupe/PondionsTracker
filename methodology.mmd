@@ -1,0 +1,21 @@
+flowchart LR
+    A((Start)) -->X(Model the \nPublic Tansportation Network \nusing graphs)
+    subgraph zero [GTFS-RT Generator Framework]
+    X --> B(Data collection on\n open data portals)
+    C[Extract trips from \n bus entries]
+    B --> C
+    B --> Z{Has stop time for every \nstop of the route?}
+    subgraph one [Processing Real-Time Data]
+        C --> F(Remove \nunwanted trips)
+        F --> G(Link trips to \n scheduled routes)
+        G --> |Aggregate trips by \n expected arrival time| D[Data preparation]
+    end
+    subgraph two [Processing Static Data]
+        Z -->|yes|P[Data preparation]
+        Z -->|No| Y(Estimate Arrival-Departure\n for each stop)
+        Y -->P
+    end
+    end
+    D -->H[Generate feeds]
+    P -->H
+
