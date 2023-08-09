@@ -3,7 +3,7 @@ package pondionstracker.integration.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import pondionstracker.base.model.RealTimeBus;
+import pondionstracker.base.model.RealTimeBusEntry;
 import pondionstracker.base.model.Trip;
 import pondionstracker.integration.TripExtractor;
 
@@ -15,16 +15,16 @@ import pondionstracker.integration.TripExtractor;
 public class DefaultTripExtractor implements TripExtractor {
 
 	@Override
-	public List<Trip> extract(List<RealTimeBus> entries) {
+	public List<Trip> extract(List<RealTimeBusEntry> entries) {
 		var trips = new ArrayList<Trip>();
 		var trip = new Trip();
 		
 		int currentDistanceTraveled = 0;
-		RealTimeBus departure = null;
-		RealTimeBus arrival = null;
-		RealTimeBus previousEntry = null;
+		RealTimeBusEntry departure = null;
+		RealTimeBusEntry arrival = null;
+		RealTimeBusEntry previousEntry = null;
 		
-		for (RealTimeBus entry : entries) {
+		for (RealTimeBusEntry entry : entries) {
 			
 			if (entry.getCurrentDistanceTraveled() >= currentDistanceTraveled) {
 				

@@ -7,7 +7,7 @@ import java.util.function.ToDoubleFunction;
 import java.util.function.ToLongBiFunction;
 
 import net.postgis.jdbc.geometry.Point;
-import pondionstracker.base.model.RealTimeBus;
+import pondionstracker.base.model.RealTimeBusEntry;
 import pondionstracker.integration.EntryMerger;
 /**
  * 
@@ -19,11 +19,11 @@ public class DefaultEntryMerger implements EntryMerger {
 	/**
 	 * The key ideia is to merge two given entries from a same Euclidean Plane
 	 */
-	public RealTimeBus merge(RealTimeBus e1, RealTimeBus e2) {
+	public RealTimeBusEntry merge(RealTimeBusEntry e1, RealTimeBusEntry e2) {
 		IntBinaryOperator avg = (o1, o2) -> (o1 + o2) / 2;
 
-		ToDoubleFunction<RealTimeBus> getXCoord = o1 -> o1.getCoord().getX();
-		ToDoubleFunction<RealTimeBus> getYCoord = o1 -> o1.getCoord().getY();
+		ToDoubleFunction<RealTimeBusEntry> getXCoord = o1 -> o1.getCoord().getX();
+		ToDoubleFunction<RealTimeBusEntry> getYCoord = o1 -> o1.getCoord().getY();
 		DoubleBinaryOperator avgDouble = (o1, o2) -> (o1 + o2) / 2;
 		ToLongBiFunction<Date, Date> avgDate = (o1, o2) -> (o1.getTime() + o2.getTime()) / 2;
 		
@@ -32,7 +32,7 @@ public class DefaultEntryMerger implements EntryMerger {
 				e2.getCoord().getZ());
 		point.dimension = e2.getCoord().dimension;
 		
-		return RealTimeBus.builder()
+		return RealTimeBusEntry.builder()
 				.currentDistanceTraveled(avg.applyAsInt(e1.getCurrentDistanceTraveled(), 
 									e2.getCurrentDistanceTraveled()))
 				.dtEntry(new Date(avgDate.applyAsLong(e1.getDtEntry(), e2.getDtEntry())))

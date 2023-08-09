@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import net.postgis.jdbc.geometry.Point;
-import pondionstracker.base.model.RealTimeBus;
+import pondionstracker.base.model.RealTimeBusEntry;
 
 /**
  * 
@@ -22,8 +22,8 @@ class DefaultEntryMergerTest {
 	
 	private SimpleDateFormat f;
 	
-	private RealTimeBus e1; 
-	private RealTimeBus e2;
+	private RealTimeBusEntry e1; 
+	private RealTimeBusEntry e2;
 	
 	@BeforeEach
 	void setUp() throws Exception {
@@ -31,13 +31,13 @@ class DefaultEntryMergerTest {
 		
 		f = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		
-		e1 = RealTimeBus.builder()
+		e1 = RealTimeBusEntry.builder()
 				.currentDistanceTraveled(100)
 				.coord(new Point(2d, 4d))
 				.dtEntry(f.parse("08/08/2023 20:47:21"))
 				.build();
 		
-		e2 = RealTimeBus.builder()
+		e2 = RealTimeBusEntry.builder()
 				.currentDistanceTraveled(200)
 				.coord(new Point(6d, 1d))
 				.dtEntry(f.parse("08/08/2023 20:51:37"))

@@ -1,10 +1,10 @@
 package pondionstracker.integration;
 
-import pondionstracker.base.model.RealTimeBus;
+import pondionstracker.base.model.RealTimeBusEntry;
 
 @FunctionalInterface
 public interface EntryMerger {
 
-	RealTimeBus merge(RealTimeBus e1, RealTimeBus e2);
+	RealTimeBusEntry merge(RealTimeBusEntry e1, RealTimeBusEntry e2);
 	
 }

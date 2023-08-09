@@ -8,7 +8,7 @@ import java.util.function.IntFunction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import pondionstracker.base.model.RealTimeBus;
+import pondionstracker.base.model.RealTimeBusEntry;
 
 /**
  * 
@@ -19,13 +19,13 @@ class DefaultTripExtractorTest {
 	
 	private DefaultTripExtractor tripExtractor;
 	
-	private List<RealTimeBus> entries;
+	private List<RealTimeBusEntry> entries;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		tripExtractor = new DefaultTripExtractor();
 		
-		IntFunction<RealTimeBus> entryProducer = currentDistanceTraveled -> RealTimeBus
+		IntFunction<RealTimeBusEntry> entryProducer = currentDistanceTraveled -> RealTimeBusEntry
 				.builder()
 				.currentDistanceTraveled(currentDistanceTraveled)
 				.build();

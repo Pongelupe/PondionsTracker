@@ -1,36 +1,27 @@
 package pondionstracker.base.model;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.postgis.jdbc.geometry.Point;
 
-/**
- * 
- * @author ppongelupe
- *
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode
-public class RealTimeBus {
+public class BusStopTrip {
 
-	private String id;
+	private int stopSequence;
 	
-	private Date dtEntry;
+	private String idStop;
 	
 	private Point coord;
 	
-	private String idVehicle;
-	
-	private String idLine;
-	
-	private int currentDistanceTraveled;
+	@Builder.Default
+	private List<RealTimeBusEntry> entries =  new ArrayList<>();
 	
 }
