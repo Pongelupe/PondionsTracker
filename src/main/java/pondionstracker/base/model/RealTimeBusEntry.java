@@ -33,4 +33,6 @@ public class RealTimeBusEntry {
 	
 	private int currentDistanceTraveled;
 	
+	private int index;
+	
 }
