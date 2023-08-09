@@ -11,6 +11,11 @@ import org.junit.jupiter.api.Test;
 import net.postgis.jdbc.geometry.Point;
 import pondionstracker.base.model.RealTimeBus;
 
+/**
+ * 
+ * @author ppongelupe
+ *
+ */
 class DefaultEntryMergerTest {
 
 	private DefaultEntryMerger merger;

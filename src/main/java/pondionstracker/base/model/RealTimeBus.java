@@ -9,6 +9,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.postgis.jdbc.geometry.Point;
 
+/**
+ * 
+ * @author ppongelupe
+ *
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
