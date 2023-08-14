@@ -7,6 +7,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import pondionstracker.base.model.BusStopTrip;
 import pondionstracker.base.model.RealTimeBusEntry;
+import pondionstracker.base.model.RealTimeTrip;
 import pondionstracker.base.model.Trip;
 import pondionstracker.integration.EntryMerger;
 
@@ -15,7 +16,7 @@ public class TripMissingEntriesGenerator {
 
 	private final EntryMerger merger;
 	
-	public void generateMissingEntries(Trip trip) {
+	public void generateMissingEntries(Trip trip, RealTimeTrip realTimeTrip) {
 		var busStopSequence = trip.getBusStopsSequence();
 		var missingStops = busStopSequence
 		.stream()
@@ -29,7 +30,7 @@ public class TripMissingEntriesGenerator {
 			var indexMinRegistroPontoSeguinte = getIndexMinEntryNextStop(busStopSequence, indexStop)
 					.orElse(indexMaxEntryPreviousStop);
 			
-			var registrosCandidatos = trip
+			var registrosCandidatos = realTimeTrip
 				.getEntries()
 				.subList(indexMaxEntryPreviousStop, indexMinRegistroPontoSeguinte + 1)
 				.stream()
@@ -40,10 +41,10 @@ public class TripMissingEntriesGenerator {
 			var registroMerged = merger.merge(registrosCandidatos.get(0), 
 					registrosCandidatos.get(registrosCandidatos.size() > 1 ? 1 : 0));
 			
-			var ponto = trip.getBusStopsSequence().get(indexStop - 1);
+			var stop = trip.getBusStopsSequence().get(indexStop - 1);
 			
-			ponto.getEntries().add(registroMerged);
-			ponto.setCalculated(true);
+			stop.getEntries().add(registroMerged);
+			stop.setCalculated(true);
 		}
 		
 	}

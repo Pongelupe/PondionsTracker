@@ -3,11 +3,11 @@ package pondionstracker.integration;
 import java.util.List;
 
 import pondionstracker.base.model.RealTimeBusEntry;
-import pondionstracker.base.model.Trip;
+import pondionstracker.base.model.RealTimeTrip;
 
 @FunctionalInterface
 public interface TripExtractor {
 
-	List<Trip> extract(List<RealTimeBusEntry> entries);
+	List<RealTimeTrip> extract(List<RealTimeBusEntry> entries);
 	
 }

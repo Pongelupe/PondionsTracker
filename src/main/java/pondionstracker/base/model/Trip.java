@@ -4,58 +4,33 @@ package pondionstracker.base.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import net.postgis.jdbc.geometry.LineString;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Trip {
 
 	private String tripId;
 	
-	private RealTimeBusEntry departure;
+	private Date tripDate;
 	
-	private RealTimeBusEntry arrival;
+	private Date tripDepartureTime;
 	
-	private List<RealTimeBusEntry> entries;
+	private Date tripArrivalTime;
 	
-	private List<BusStopTrip> busStopsSequence;
+	private double length;
 	
-	public Trip() {
-		this.entries = new ArrayList<>();
-	}
+	private LineString geom;
 	
-	public String getIdVehicle() {
-		return departure.getIdVehicle();
-	}
+	private RealTimeTrip realTimeTrip;
 	
-	public String getIdLine() {
-		return departure.getIdLine();
-	}
-	
-	public boolean hasTripFinished() {
-		return arrival != null;
-	}
-	
-	public Date getDepatureTime() {
-		return departure.getDtEntry();
-	}
-	
-	public Date getArrivalTime() {
-		return hasTripFinished() ? arrival.getDtEntry() : null;
-	}
-	
-	public int getCurrentDistanceTraveled() {
-		return getLastEntry().getCurrentDistanceTraveled();
-	}
-	
-	private RealTimeBusEntry getLastEntry() {
-		return Optional.ofNullable(arrival)
-				.orElseGet(() -> entries.get(entries.size() -1));
-	}
-	
+	@Builder.Default
+	private List<BusStopTrip> busStopsSequence = new ArrayList<>();
 }

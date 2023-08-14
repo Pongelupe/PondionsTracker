@@ -1,9 +1,8 @@
 package pondionstracker.integration.impl;
 
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import pondionstracker.base.model.BusStopTrip;
+import pondionstracker.base.model.RealTimeTrip;
 import pondionstracker.base.model.Trip;
 import pondionstracker.integration.TripBusStopLinker;
 
@@ -13,7 +12,8 @@ public class DefaultTripBusStopLinker implements TripBusStopLinker {
 	private final double distanceThreshold;
 
 	@Override
-	public void link(Trip trip, List<BusStopTrip> busStopSequence) {
+	public void link(Trip trip, RealTimeTrip realTimeTrip) {
+		var busStopSequence = trip.getBusStopsSequence();
 		var currentEntryIndex = 0;
 
 		for (var s = 0; s < busStopSequence.size(); s++) {
@@ -27,12 +27,12 @@ public class DefaultTripBusStopLinker implements TripBusStopLinker {
 			var searching = true;
 			var currentStopDirection = busStopSequence.size() / 2 >= currentStop.getStopSequence();
 
-			var distanceTraveledTrip = trip.getCurrentDistanceTraveled();
+			var distanceTraveledTrip = realTimeTrip.getCurrentDistanceTraveled();
 
 			var previousCurrentEntryIndex = currentEntryIndex;
 
-			for (var i = currentEntryIndex; i < trip.getEntries().size() - 1; i++) {
-				var entry = trip.getEntries().get(i);
+			for (var i = currentEntryIndex; i < realTimeTrip.getEntries().size() - 1; i++) {
+				var entry = realTimeTrip.getEntries().get(i);
 				var distance = entry.getCoord().distance(currentStop.getCoord());
 
 				var entryDirection = distanceTraveledTrip / 2 >= entry.getCurrentDistanceTraveled();
@@ -46,7 +46,7 @@ public class DefaultTripBusStopLinker implements TripBusStopLinker {
 					smallestBiggerDistance = distance;
 				} else if (!currentStop.getEntries().isEmpty()) {
 					currentEntryIndex = i - 1;
-					i = trip.getEntries().size(); //NOSONAR
+					i = realTimeTrip.getEntries().size(); //NOSONAR
 				} else if (smallestBiggerDistance < distance && searching) {
 					smallestBiggerDistance = distance;
 					currentEntryIndex++;
