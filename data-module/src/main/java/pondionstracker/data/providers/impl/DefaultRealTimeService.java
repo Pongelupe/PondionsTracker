@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import pondionstracker.base.model.RealTimeBusEntry;
-import pondionstracker.data.components.Loadfile;
+import pondionstracker.data.components.LoadFile;
 import pondionstracker.data.components.QueryExecutor;
 import pondionstracker.data.constants.Query;
 import pondionstracker.data.providers.RealTimeService;
@@ -17,7 +17,7 @@ public class DefaultRealTimeService implements RealTimeService {
 	
 	private final QueryExecutor queryExecutor;
 	
-	private final Loadfile loadFile;
+	private final LoadFile loadFile;
 	
 	@Override
 	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Integer idLine, Date date) {

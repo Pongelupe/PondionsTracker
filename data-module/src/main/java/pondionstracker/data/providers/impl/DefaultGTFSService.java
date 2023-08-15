@@ -6,7 +6,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import pondionstracker.base.model.Route;
 import pondionstracker.base.model.Trip;
-import pondionstracker.data.components.Loadfile;
+import pondionstracker.data.components.LoadFile;
 import pondionstracker.data.components.QueryExecutor;
 import pondionstracker.data.constants.Query;
 import pondionstracker.data.providers.GTFSService;
@@ -16,7 +16,7 @@ public class DefaultGTFSService implements GTFSService {
 
 	private final QueryExecutor queryExecutor;
 
-	private final Loadfile loadFile;
+	private final LoadFile loadFile;
 
 	@Override
 	public Optional<Route> getRouteByRouteShortName(String routeShortName) {
@@ -29,9 +29,9 @@ public class DefaultGTFSService implements GTFSService {
 	private List<Trip> getTripsByRouteId(String routeId) {
 		var query = loadFile.loadQuery(Query.GET_TRIPS_BY_ROUTE_ID);
 		
-		queryExecutor.queryAll(routeId, rs -> Trip.builder()
+		queryExecutor.queryAll(query, rs -> Trip.builder()
 				.tripId(rs.getString(1))
-				.build());
+				.build(), routeId);
 		
 		return null;
 	}
