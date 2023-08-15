@@ -2,8 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>br</groupId>
-    <artifactId>pondionstracker</artifactId>
+    <groupId>br.pondionstracker</groupId>
+    <artifactId>pondionstracker-parent</artifactId>
     <version>1.0.0</version>
   </parent>
 
@@ -15,8 +15,8 @@
   <artifactId>data-module</artifactId>
   <dependencies>
   	<dependency>
-  		<groupId>br</groupId>
-  		<artifactId>pondionstracker</artifactId>
+  		<groupId>br.pondionstracker</groupId>
+  		<artifactId>base-module</artifactId>
   		<version>1.0.0</version>
   	</dependency>
   </dependencies>

@@ -14,13 +14,6 @@
 		<maven.compiler.source>17</maven.compiler.source>
 	</properties>
 
-	<artifactId>integration-module</artifactId>
+	<artifactId>base-module</artifactId>
 
-	<dependencies>
-		<dependency>
-			<groupId>br.pondionstracker</groupId>
-			<artifactId>base-module</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-	</dependencies>
 </project>

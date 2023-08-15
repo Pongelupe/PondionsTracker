@@ -3,19 +3,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>br</groupId>
-	<artifactId>pondionstracker</artifactId>
+	<groupId>br.pondionstracker</groupId>
+	<artifactId>pondionstracker-parent</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.6.1</slf4j.version>
 		<lombok.version>1.18.28</lombok.version>
 	</properties>
 
 	<modules>
+		<module>base-module</module>
 		<module>data-module</module>
 		<module>integration-module</module>
 	</modules>

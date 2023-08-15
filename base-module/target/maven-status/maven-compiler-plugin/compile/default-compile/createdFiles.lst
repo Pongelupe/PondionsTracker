@@ -1,0 +1,15 @@
+pondionstracker/base/model/BusStopTrip.class
+pondionstracker/utils/DateUtils.class
+pondionstracker/base/model/Trip$TripBuilder.class
+pondionstracker/base/model/RealTimeTrip.class
+pondionstracker/base/model/Trip.class
+pondionstracker/base/model/TripSchedule.class
+pondionstracker/base/model/StopPointsInterval$StopPointsIntervalBuilder.class
+pondionstracker/base/model/Route.class
+pondionstracker/base/model/TripScheduleEntry.class
+pondionstracker/base/model/StopPointsInterval.class
+pondionstracker/base/model/BusStopTrip$BusStopTripBuilder.class
+pondionstracker/base/model/RealTimeBusEntry$RealTimeBusEntryBuilder.class
+pondionstracker/base/model/Route$RouteBuilder.class
+pondionstracker/base/model/RealTimeBusEntry.class
+pondionstracker/base/model/RealTimeTrip$RealTimeTripBuilder.class

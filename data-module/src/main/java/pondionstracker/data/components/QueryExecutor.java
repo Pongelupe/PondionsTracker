@@ -14,8 +14,13 @@ public class QueryExecutor {
 
 	private final Connection conn;
 	
+	public <T> T queryFirst(String query, RowMapper<T> mapper, Object... parameters) {
+		var allResults = queryAll(query, mapper, parameters);
+		return allResults.isEmpty() ? null : allResults.get(0);
+	}
+	
 	@SneakyThrows
-	public <T> List<T> queryAll(String query, RowMapper<T> mapper) {
+	public <T> List<T> queryAll(String query, RowMapper<T> mapper, Object... parameters) {
 		var result = new ArrayList<T>();
 		var stmt = conn.createStatement();
 		
