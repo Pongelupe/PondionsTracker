@@ -13,4 +13,11 @@
 	</properties>
 
   <artifactId>data-module</artifactId>
+  <dependencies>
+  	<dependency>
+  		<groupId>br</groupId>
+  		<artifactId>pondionstracker</artifactId>
+  		<version>1.0.0</version>
+  	</dependency>
+  </dependencies>
 </project>
