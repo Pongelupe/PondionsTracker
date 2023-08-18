@@ -19,6 +19,12 @@ public class Trip {
 
 	private String tripId;
 	
+	private String shapeId;
+	
+	private String tripHeadsign;
+
+	private String serviceId;
+	
 	private Date tripDate;
 	
 	private Date tripDepartureTime;

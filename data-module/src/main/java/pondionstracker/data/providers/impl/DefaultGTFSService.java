@@ -34,12 +34,11 @@ public class DefaultGTFSService implements GTFSService {
 	public List<String> getServiceId(Date date) {
 		var dayOfWeek = DateUtils.getDayOfWeekFromDate(date)
 				.name().toLowerCase();
-		java.sql.Date sqlDate = DateUtils.getSqlDate(date);
 		
 		return queryExecutor.queryAll(Query.GET_CALENDAR_BY_DATE, rs -> 
 			new DayOfWeekServiceDTO(rs.getString("service_id"),
 				rs.getString(dayOfWeek)), 
-			Map.of(Parameter.DATE, sqlDate))
+			Map.of(Parameter.DATE, DateUtils.getSqlDate(date)))
 			.stream()
 			.filter(dow -> "available".equals(dow.getDayOfWeek()))
 			.map(DayOfWeekServiceDTO::getServiceId)
@@ -47,12 +46,13 @@ public class DefaultGTFSService implements GTFSService {
 	}
 
 	public List<Trip> getTripsByRouteIdAndServiceIds(String routeId, List<String> serviceIds) {
-		queryExecutor.queryAll(Query.GET_TRIPS_BY_ROUTE_ID, rs -> Trip.builder()
-				.tripId(rs.getString(1))
+		return queryExecutor.queryAll(Query.GET_TRIPS_BY_ROUTE_ID, rs -> Trip.builder()
+				.tripId(rs.getString("trip_id"))
+				.shapeId(rs.getString("shape_id"))
+				.serviceId(rs.getString("service_id"))
+				.tripHeadsign(rs.getString("trip_headsign"))
 				.build(), Map.of(Parameter.ROUTE_ID, routeId,
 						Parameter.SERVCICE_IDS, serviceIds));
-		
-		return null;
 	}
 	
 	private List<Trip> getTripsByRouteIdAndServiceIds(RouteTripRecord r) {
