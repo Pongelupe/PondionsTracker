@@ -1,14 +1,27 @@
 package pondionstracker.data.constants;
 
-import lombok.experimental.UtilityClass;
+import static pondionstracker.data.constants.Query.Parameter.*;
 
-@UtilityClass
-public class Query {
+import java.util.List;
 
-	public static final String GET_ENTRIES = "GET_ENTRIES.sql";
+import lombok.Getter;
 
-	public static final String GET_ROUTE_BY_ROUTE_SHORT_NAME = "GET_ROUTE_BY_ROUTE_SHORT_NAME.sql";
-
-	public static final String GET_TRIPS_BY_ROUTE_ID = "GET_TRIPS_BY_ROUTE_ID.sql";
+@Getter
+public enum Query {
+	
+	GET_CALENDAR_BY_DATE(DATE),
+	GET_ENTRIES,
+	GET_ROUTE_BY_ROUTE_SHORT_NAME(ROUTE_SHORT_NAME),
+	GET_TRIPS_BY_ROUTE_ID;
+	
+	private final List<Parameter> parameters;
+	
+	private Query(Parameter... parameters) {
+		this.parameters = List.of(parameters);
+	}
+	
+	public enum Parameter {
+		DATE, ROUTE_ID, ROUTE_SHORT_NAME, SERVCICE_IDS;
+	}
 	
 }

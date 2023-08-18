@@ -10,7 +10,7 @@ public class QueryNotFoundException extends RuntimeException {
 	private final String queryFileName;
 	
 	public QueryNotFoundException(String queryFileName, Exception e) {
-		super("SQL file %s not found!".formatted(queryFileName), e);
+		super("SQL file %s.sql not found!".formatted(queryFileName), e);
 		this.queryFileName = queryFileName;
 	}
 

@@ -1,5 +1,6 @@
 package pondionstracker.utils;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,6 +22,14 @@ public class DateUtils {
 	public Date dateFromLocalTime(Date d, LocalTime e) {
 		var dt = date2localdate(d);
 		return Date.from(e.atDate(dt).atZone(ZoneId.systemDefault()).toInstant());
+	}
+	
+	public java.sql.Date getSqlDate(Date d){
+		return new java.sql.Date(d.getTime());
+	}
+	
+	public DayOfWeek getDayOfWeekFromDate(Date d) {
+		return date2localdate(d).getDayOfWeek();
 	}
 	
 }

@@ -1,39 +1,62 @@
 package pondionstracker.data.providers.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 import pondionstracker.base.model.Route;
 import pondionstracker.base.model.Trip;
-import pondionstracker.data.components.LoadFile;
 import pondionstracker.data.components.QueryExecutor;
 import pondionstracker.data.constants.Query;
+import pondionstracker.data.constants.Query.Parameter;
 import pondionstracker.data.providers.GTFSService;
+import pondionstracker.dto.DayOfWeekServiceDTO;
+import pondionstracker.utils.DateUtils;
 
 @RequiredArgsConstructor
 public class DefaultGTFSService implements GTFSService {
+	
+	private record RouteTripRecord(String routeId, List<String> serviceIds) {}
 
 	private final QueryExecutor queryExecutor;
 
-	private final LoadFile loadFile;
-
 	@Override
-	public Optional<Route> getRouteByRouteShortName(String routeShortName) {
-		var query = loadFile.loadQuery(Query.GET_ROUTE_BY_ROUTE_SHORT_NAME);
-		return Optional.ofNullable(queryExecutor.queryFirst(query, rs -> rs.getString(1), routeShortName))
-				.map(routeId -> new Route(routeId, getTripsByRouteId(routeId)))
+	public Optional<Route> getRouteByRouteShortName(String routeShortName, Date date) {
+		return Optional.ofNullable(queryExecutor.queryFirst(Query.GET_ROUTE_BY_ROUTE_SHORT_NAME, 
+				rs -> rs.getString(1), Map.of(Parameter.ROUTE_SHORT_NAME, routeShortName)))
+				.map(routeId -> new RouteTripRecord(routeId, getServiceId(date)))
+				.map(routeTripRecord -> new Route(routeTripRecord.routeId, getTripsByRouteIdAndServiceIds(routeTripRecord)))
 		;
 	}
 
-	private List<Trip> getTripsByRouteId(String routeId) {
-		var query = loadFile.loadQuery(Query.GET_TRIPS_BY_ROUTE_ID);
+	public List<String> getServiceId(Date date) {
+		var dayOfWeek = DateUtils.getDayOfWeekFromDate(date)
+				.name().toLowerCase();
+		java.sql.Date sqlDate = DateUtils.getSqlDate(date);
 		
-		queryExecutor.queryAll(query, rs -> Trip.builder()
+		return queryExecutor.queryAll(Query.GET_CALENDAR_BY_DATE, rs -> 
+			new DayOfWeekServiceDTO(rs.getString("service_id"),
+				rs.getString(dayOfWeek)), 
+			Map.of(Parameter.DATE, sqlDate))
+			.stream()
+			.filter(dow -> "available".equals(dow.getDayOfWeek()))
+			.map(DayOfWeekServiceDTO::getServiceId)
+			.toList();
+	}
+
+	public List<Trip> getTripsByRouteIdAndServiceIds(String routeId, List<String> serviceIds) {
+		queryExecutor.queryAll(Query.GET_TRIPS_BY_ROUTE_ID, rs -> Trip.builder()
 				.tripId(rs.getString(1))
-				.build(), routeId);
+				.build(), Map.of(Parameter.ROUTE_ID, routeId,
+						Parameter.SERVCICE_IDS, serviceIds));
 		
 		return null;
+	}
+	
+	private List<Trip> getTripsByRouteIdAndServiceIds(RouteTripRecord r) {
+		return getTripsByRouteIdAndServiceIds(r.routeId, r.serviceIds);
 	}
 
 }
