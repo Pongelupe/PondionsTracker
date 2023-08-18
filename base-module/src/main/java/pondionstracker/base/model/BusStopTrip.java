@@ -1,6 +1,7 @@
 package pondionstracker.base.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -14,15 +15,17 @@ import net.postgis.jdbc.geometry.Point;
 @NoArgsConstructor
 @Builder
 public class BusStopTrip {
-
+	
 	private int stopSequence;
 	
 	private String idStop;
 	
+	private Date expectedTime;
+	
 	private Point coord;
 	
 	@Builder.Default
-	private List<RealTimeBusEntry> entries =  new ArrayList<>();
+	private List<RealTimeBusEntry> entries = new ArrayList<>();
 	
 	private boolean calculated;
 	
@@ -31,6 +34,7 @@ public class BusStopTrip {
 	public BusStopTrip(BusStopTrip ponto) {
 		this.stopSequence = ponto.getStopSequence();
 		this.idStop = ponto.getIdStop();
+		this.expectedTime = ponto.getExpectedTime();
 		this.coord = ponto.getCoord();
 		this.entries = new ArrayList<>(ponto.getEntries());
 		this.calculated = ponto.calculated;

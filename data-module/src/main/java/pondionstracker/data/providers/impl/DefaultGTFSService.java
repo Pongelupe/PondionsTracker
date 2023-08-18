@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+import net.postgis.jdbc.PGgeometry;
+import net.postgis.jdbc.geometry.LineString;
+import net.postgis.jdbc.geometry.Point;
+import pondionstracker.base.model.BusStopTrip;
 import pondionstracker.base.model.Route;
 import pondionstracker.base.model.Trip;
 import pondionstracker.data.components.QueryExecutor;
@@ -19,7 +23,7 @@ import pondionstracker.utils.DateUtils;
 public class DefaultGTFSService implements GTFSService {
 	
 	private record RouteTripRecord(String routeId, List<String> serviceIds) {}
-
+	
 	private final QueryExecutor queryExecutor;
 
 	@Override
@@ -27,7 +31,8 @@ public class DefaultGTFSService implements GTFSService {
 		return Optional.ofNullable(queryExecutor.queryFirst(Query.GET_ROUTE_BY_ROUTE_SHORT_NAME, 
 				rs -> rs.getString(1), Map.of(Parameter.ROUTE_SHORT_NAME, routeShortName)))
 				.map(routeId -> new RouteTripRecord(routeId, getServiceId(date)))
-				.map(routeTripRecord -> new Route(routeTripRecord.routeId, getTripsByRouteIdAndServiceIds(routeTripRecord)))
+				.map(routeTripRecord -> new Route(routeTripRecord.routeId, date,
+						getTripsByRouteIdAndServiceIds(routeTripRecord)))
 		;
 	}
 
@@ -46,13 +51,32 @@ public class DefaultGTFSService implements GTFSService {
 	}
 
 	public List<Trip> getTripsByRouteIdAndServiceIds(String routeId, List<String> serviceIds) {
-		return queryExecutor.queryAll(Query.GET_TRIPS_BY_ROUTE_ID, rs -> Trip.builder()
+		return queryExecutor.queryAll(Query.GET_TRIPS_BY_ROUTE_ID_AND_SERVICE_IDS, rs -> Trip.builder()
 				.tripId(rs.getString("trip_id"))
 				.shapeId(rs.getString("shape_id"))
 				.serviceId(rs.getString("service_id"))
 				.tripHeadsign(rs.getString("trip_headsign"))
+				.geom((LineString) ((PGgeometry) rs.getObject("shape_ls")).getGeometry())
+				.length(rs.getDouble("length"))
 				.build(), Map.of(Parameter.ROUTE_ID, routeId,
-						Parameter.SERVCICE_IDS, serviceIds));
+						Parameter.SERVCICE_IDS, serviceIds))
+				.stream()
+				.parallel()
+				.map(trip -> {
+					var stops = queryExecutor.queryAll(Query.GET_STOP_SEQUENCE_BY_TRIP_ID, rs -> 
+					BusStopTrip.builder()
+					.stopSequence(rs.getInt("stop_sequence"))
+					.idStop(rs.getString("stop_id"))
+					.expectedTime(rs.getTime("arrival_time"))
+					.coord((Point) ((PGgeometry) rs.getObject("stop_loc")).getGeometry())
+					.build()
+					, Map.of(Parameter.TRIP_ID, trip.getTripId()));
+					
+					trip.setBusStopsSequence(stops);
+					
+					return trip;
+				})
+				.toList();
 	}
 	
 	private List<Trip> getTripsByRouteIdAndServiceIds(RouteTripRecord r) {

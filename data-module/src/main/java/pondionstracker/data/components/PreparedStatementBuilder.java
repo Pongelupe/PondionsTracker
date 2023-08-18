@@ -22,7 +22,7 @@ import pondionstracker.data.exceptions.SQLParameterNotFound;
 
 public class PreparedStatementBuilder {
 	
-	private static final Pattern REGEX_PARAMETERS = Pattern.compile("\\:\\w+");
+	private static final Pattern REGEX_PARAMETERS = Pattern.compile("\\:(?!.*geometry)\\w+");
 
 	private static final String SQL_EXT = ".sql";
 	private static final String CLASSPATH_SQL_FOLDER = "/sql/"; //NOSONAR
