@@ -8,10 +8,10 @@ import pondionstracker.base.model.RealTimeBusEntry;
 
 public interface RealTimeService {
 	
-	public List<Integer> getIdsLineByRouteId(String routeId);
+	public List<String> getIdsLineByRouteId(String routeId);
 
-	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Integer idLine, Date date);
+	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Date date, String... idLines);
 
-	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Integer idLine, Date startDate, Date endDate);
+	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Date startDate, Date endDate, String... idLines);
 	
 }

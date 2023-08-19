@@ -11,6 +11,7 @@ import net.postgis.jdbc.geometry.LineString;
 import net.postgis.jdbc.geometry.Point;
 import pondionstracker.base.model.BusStopTrip;
 import pondionstracker.base.model.Route;
+import pondionstracker.base.model.StopPointsInterval;
 import pondionstracker.base.model.Trip;
 import pondionstracker.data.components.QueryExecutor;
 import pondionstracker.data.constants.Query;
@@ -22,9 +23,9 @@ import pondionstracker.utils.DateUtils;
 @RequiredArgsConstructor
 public class DefaultGTFSService implements GTFSService {
 	
-	private record RouteTripRecord(String routeId, List<String> serviceIds) {}
+	protected record RouteTripRecord(String routeId, List<String> serviceIds) {}
 	
-	private final QueryExecutor queryExecutor;
+	protected final QueryExecutor queryExecutor;
 
 	@Override
 	public Optional<Route> getRouteByRouteShortName(String routeShortName, Date date) {
@@ -77,6 +78,15 @@ public class DefaultGTFSService implements GTFSService {
 					return trip;
 				})
 				.toList();
+	}
+	
+	public List<StopPointsInterval> getStopPointsInterval(String tripId) {
+		return queryExecutor.queryAll(Query.GET_STOP_TIME_INVERVAL_BY_TRIP_ID, 
+				rs -> StopPointsInterval.builder()
+			.stopSequence1(rs.getInt(1))
+			.stopSequence2(rs.getInt(2))
+			.length(rs.getDouble(3))
+		.build(), Map.of(Parameter.TRIP_ID, tripId));
 	}
 	
 	private List<Trip> getTripsByRouteIdAndServiceIds(RouteTripRecord r) {

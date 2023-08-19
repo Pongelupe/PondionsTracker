@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 
 import lombok.SneakyThrows;
-import pondionstracker.data.constants.Query;
 import pondionstracker.data.constants.Query.Parameter;
 import pondionstracker.data.exceptions.QueryNotFoundException;
 import pondionstracker.data.exceptions.SQLParameterNotFound;
@@ -28,12 +27,12 @@ public class PreparedStatementBuilder {
 	private static final String CLASSPATH_SQL_FOLDER = "/sql/"; //NOSONAR
 	
 	private final Connection conn;
-	private final Query query; 
+	private final String query; 
 	private final Map<Parameter, Object> originalParameters;
 	
 	private List<Object> parameters;
 	
-	public PreparedStatementBuilder(Connection conn, Query query, Map<Parameter, Object> parameters) {
+	public PreparedStatementBuilder(Connection conn, String query, Map<Parameter, Object> parameters) {
 		this.conn = conn;
 		this.query = query;
 		this.originalParameters = parameters;
@@ -53,7 +52,7 @@ public class PreparedStatementBuilder {
 	
 	private String prepareEffectiveQuery() {
 		StringBuilder sb = new StringBuilder();
-		var matcher = REGEX_PARAMETERS.matcher(loadQuery(query.name()));
+		var matcher = REGEX_PARAMETERS.matcher(loadQuery(query));
 		
 		while (matcher.find()) {
 			var parameter = Parameter.valueOf(matcher.group().substring(1));

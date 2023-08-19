@@ -16,12 +16,20 @@ public class QueryExecutor {
 	private final Connection conn;
 	
 	public <T> T queryFirst(Query query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
+		return queryFirst(query.name(), mapper, parameters);
+	}
+	
+	public <T> List<T> queryAll(Query query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
+		return queryAll(query.name(), mapper, parameters);
+	}
+	
+	public <T> T queryFirst(String query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
 		var allResults = queryAll(query, mapper, parameters);
 		return allResults.isEmpty() ? null : allResults.get(0);
 	}
-	
+
 	@SneakyThrows
-	public <T> List<T> queryAll(Query query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
+	public <T> List<T> queryAll(String query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
 		var stmt = new PreparedStatementBuilder(conn, query, parameters).build();
 		var rs = stmt.executeQuery();
 		

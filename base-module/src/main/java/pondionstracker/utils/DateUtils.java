@@ -24,8 +24,16 @@ public class DateUtils {
 		return Date.from(e.atDate(dt).atZone(ZoneId.systemDefault()).toInstant());
 	}
 	
+	public Date localdatetime2Date(LocalDateTime d) {
+		return Date.from(d.atZone(ZoneId.systemDefault()).toInstant());
+	}
+	
 	public java.sql.Date getSqlDate(Date d){
 		return new java.sql.Date(d.getTime());
+	}
+	
+	public java.sql.Timestamp getSqlTimestamp(Date d){
+		return new java.sql.Timestamp(d.getTime());
 	}
 	
 	public DayOfWeek getDayOfWeekFromDate(Date d) {

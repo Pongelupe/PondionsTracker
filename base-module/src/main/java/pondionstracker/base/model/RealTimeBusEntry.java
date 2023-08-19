@@ -21,7 +21,6 @@ import net.postgis.jdbc.geometry.Point;
 @EqualsAndHashCode
 public class RealTimeBusEntry {
 
-	private String id;
 	
 	private Date dtEntry;
 	
