@@ -2,15 +2,14 @@ package pondionstracker.integration.drivers;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pondionstracker.base.model.RealTimeBusEntry;
 import pondionstracker.base.model.RealTimeTrip;
-import pondionstracker.base.model.Trip;
 import pondionstracker.data.providers.GTFSService;
 import pondionstracker.data.providers.RealTimeService;
+import pondionstracker.integration.TripBusStopLinker;
 import pondionstracker.integration.TripExtractor;
 import pondionstracker.integration.TripMatcher;
 
@@ -25,6 +24,8 @@ public class Driver1 {
 	private final TripExtractor tripExtractor;
 
 	private final TripMatcher tripMatcher;
+	
+	private final TripBusStopLinker tripBusStopLinker;
 	
 	public void integrate(String routeShortName, Date date) {
 		var route = gtfsService.getRouteByRouteShortName(routeShortName, date).orElseThrow();
@@ -44,9 +45,10 @@ public class Driver1 {
 		log.info("Summarizing {} raw trips", realtimeTrips.size());
 		
 		var matchedScheadule = tripMatcher.match(route.getTrips(), realtimeTrips);
-		var emptyScheadules = matchedScheadule.values().stream().filter(List<RealTimeTrip>::isEmpty).count();
-		log.info("%d/%d ({}%%) trips filled!".formatted(matchedScheadule.size(), emptyScheadules), 
+		var emptyScheadules = matchedScheadule.values().stream().filter(t -> !t.isEmpty()).count();
+		log.info("%d/%d ({}%%) of the scheadule filled!".formatted(matchedScheadule.size(), emptyScheadules), 
 				(double) emptyScheadules / matchedScheadule.size());
+		route.getTrips().forEach(trip -> trip.setRealTimeTrips(matchedScheadule.get(trip)));
 		
 	}
 	

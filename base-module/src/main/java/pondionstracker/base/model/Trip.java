@@ -36,7 +36,7 @@ public class Trip {
 	
 	private LineString geom;
 	
-	private RealTimeTrip realTimeTrip;
+	private List<RealTimeTrip> realTimeTrips;
 	
 	@Builder.Default
 	private List<BusStopTrip> busStopsSequence = new ArrayList<>();
