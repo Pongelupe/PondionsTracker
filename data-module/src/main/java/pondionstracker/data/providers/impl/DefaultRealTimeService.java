@@ -35,7 +35,7 @@ public class DefaultRealTimeService implements RealTimeService {
 	@Override
 	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Date startDate, Date endDate, String... idLines) {
 		return queryExecutor.queryAll(Query.GET_ENTRIES, rs -> RealTimeBusEntry.builder()
-				.dtEntry(rs.getDate("dt_entry"))
+				.dtEntry(rs.getTimestamp("dt_entry"))
 				.coord((Point) ((PGgeometry) rs.getObject("coord")).getGeometry())
 				.idVehicle(rs.getString("id_vehicle"))
 				.idLine(rs.getString("id_line"))

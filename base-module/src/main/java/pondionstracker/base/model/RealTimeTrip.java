@@ -38,7 +38,7 @@ public class RealTimeTrip {
 		return arrival != null;
 	}
 	
-	public Date getDepatureTime() {
+	public Date getDepartureTime() {
 		return departure.getDtEntry();
 	}
 	

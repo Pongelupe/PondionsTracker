@@ -12,7 +12,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class DateUtils {
 	
-	public LocalDateTime date2localdatetime(Date d) {return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();}
+	public LocalDateTime date2localdatetime(Date d) {return new Date(d.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();}
 	
 	public LocalDate date2localdate(Date d) {return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();}
 	
