@@ -31,14 +31,4 @@ public class BusStopTrip {
 	
 	private Double distance;
 	
-	public BusStopTrip(BusStopTrip ponto) {
-		this.stopSequence = ponto.getStopSequence();
-		this.idStop = ponto.getIdStop();
-		this.expectedTime = ponto.getExpectedTime();
-		this.coord = ponto.getCoord();
-		this.entries = new ArrayList<>(ponto.getEntries());
-		this.calculated = ponto.calculated;
-		this.distance = ponto.getDistance();
-	}
-	
 }

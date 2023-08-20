@@ -49,6 +49,18 @@ public class Trip {
 		return Optional.ofNullable(tripArrivalTime).orElseGet(() -> getDateAtIndex(busStopsSequence.size() - 1));
 	}
 	
+	public double getCalculatedEntriesPercentage() {
+		var totalEntriesCount = busStopsSequence.size();
+		var generatedEntriesCount = getCalculatedEntriesCount();
+		return (double) generatedEntriesCount / totalEntriesCount;
+	}
+	
+	public long getCalculatedEntriesCount() {
+		return busStopsSequence.stream()
+				.filter(e -> e.isCalculated())
+				.count();
+	}
+	
 	private Date getDateAtIndex(int index) {
 		try {
 			return busStopsSequence.get(index).getExpectedTime();
