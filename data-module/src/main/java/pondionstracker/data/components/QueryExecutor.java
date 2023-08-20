@@ -1,50 +1,39 @@
 package pondionstracker.data.components;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import pondionstracker.data.constants.Query;
+import pondionstracker.data.constants.Query.Parameter;
 
 @RequiredArgsConstructor
 public class QueryExecutor {
 
 	private final Connection conn;
 	
-	public <T> T queryFirst(String query, RowMapper<T> mapper, Object... parameters) {
+	public <T> T queryFirst(Query query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
+		return queryFirst(query.name(), mapper, parameters);
+	}
+	
+	public <T> List<T> queryAll(Query query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
+		return queryAll(query.name(), mapper, parameters);
+	}
+	
+	public <T> T queryFirst(String query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
 		var allResults = queryAll(query, mapper, parameters);
 		return allResults.isEmpty() ? null : allResults.get(0);
 	}
-	
+
 	@SneakyThrows
-	public <T> List<T> queryAll(String query, RowMapper<T> mapper, Object... parameters) {
-		var result = new ArrayList<T>();
-		var index = new AtomicInteger(1);
-		var stmt = conn.prepareStatement(query);
-		
-		List.of(parameters).forEach(p -> setObject(stmt, index, p));
-		
+	public <T> List<T> queryAll(String query, RowMapper<T> mapper, Map<Parameter, Object> parameters) {
+		var stmt = new PreparedStatementBuilder(conn, query, parameters).build();
 		var rs = stmt.executeQuery();
 		
-		while(rs.next()) {
-			result.add(mapper.mapRow(rs));
-		}
-		
-		stmt.close();
-		return result;
-	}
-	
-	@SneakyThrows
-	public <T> Set<T> queryAllSet(String query, RowMapper<T> mapper) {
-		var result = new HashSet<T>();
-		var stmt = conn.createStatement();
-		
-		var rs = stmt.executeQuery(query);
+		var result = new ArrayList<T>();
 		
 		while(rs.next()) {
 			result.add(mapper.mapRow(rs));
@@ -54,9 +43,5 @@ public class QueryExecutor {
 		return result;
 	}
 	
-	@SneakyThrows
-	private void setObject(PreparedStatement stmt, AtomicInteger index, Object v) {
-		stmt.setObject(index.getAndIncrement(), v);
-	}
 	
 }

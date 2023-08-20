@@ -1,0 +1,1 @@
+select * from calendar c where start_date <= :DATE and end_date >= :DATE

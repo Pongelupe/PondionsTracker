@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS real_time_bus (
 	id serial NOT NULL,
 	dt_entry timestamp NOT NULL,
 	coord geometry NOT NULL,
-	id_vehicle int4 NOT NULL,
-	id_line int4 NOT NULL,
+	id_vehicle varchar(35) NOT NULL,
+	id_line varchar(35) NOT NULL,
 	current_distance_traveled int4 NOT NULL
 );
 CREATE INDEX IF NOT EXISTS real_time_bus_dt_entry_idx ON real_time_bus USING btree (dt_entry);

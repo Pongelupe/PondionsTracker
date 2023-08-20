@@ -10,12 +10,14 @@ import pondionstracker.base.model.RealTimeBusEntry;
 import pondionstracker.base.model.RealTimeTrip;
 import pondionstracker.base.model.Trip;
 import pondionstracker.integration.EntryMerger;
+import pondionstracker.integration.TripMissingEntriesGenerator;
 
 @RequiredArgsConstructor
-public class TripMissingEntriesGenerator {
+public class DefaultTripMissingEntriesGenerator implements TripMissingEntriesGenerator {
 
 	private final EntryMerger merger;
 	
+	@Override
 	public void generateMissingEntries(Trip trip, RealTimeTrip realTimeTrip) {
 		var busStopSequence = trip.getBusStopsSequence();
 		var missingStops = busStopSequence

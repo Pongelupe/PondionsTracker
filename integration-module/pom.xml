@@ -22,5 +22,10 @@
 			<artifactId>base-module</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>br.pondionstracker</groupId>
+			<artifactId>data-module</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>

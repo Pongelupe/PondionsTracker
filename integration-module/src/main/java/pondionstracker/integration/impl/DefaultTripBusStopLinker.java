@@ -1,7 +1,6 @@
 package pondionstracker.integration.impl;
 
 import lombok.RequiredArgsConstructor;
-import pondionstracker.base.model.BusStopTrip;
 import pondionstracker.base.model.RealTimeTrip;
 import pondionstracker.base.model.Trip;
 import pondionstracker.integration.TripBusStopLinker;
@@ -15,19 +14,18 @@ public class DefaultTripBusStopLinker implements TripBusStopLinker {
 	public void link(Trip trip, RealTimeTrip realTimeTrip) {
 		var busStopSequence = trip.getBusStopsSequence();
 		var currentEntryIndex = 0;
+		
+		var distanceTraveledTrip = realTimeTrip.getCurrentDistanceTraveled();
 
 		for (var s = 0; s < busStopSequence.size(); s++) {
 			var currentStop = busStopSequence.get(s);
 
-			var lastStop = s > 0 ? busStopSequence.get(s - 1) : null;
 			//menorMaiorDistancia
-			var smallestBiggerDistance = lastStop != null
-					? lastStop.getCoord().distance(currentStop.getCoord())
+			var smallestBiggerDistance = s > 0
+					? busStopSequence.get(s - 1).getCoord().distance(currentStop.getCoord())
 					: 0d;
 			var searching = true;
 			var currentStopDirection = busStopSequence.size() / 2 >= currentStop.getStopSequence();
-
-			var distanceTraveledTrip = realTimeTrip.getCurrentDistanceTraveled();
 
 			var previousCurrentEntryIndex = currentEntryIndex;
 
@@ -45,8 +43,8 @@ public class DefaultTripBusStopLinker implements TripBusStopLinker {
 					currentEntryIndex = i;
 					smallestBiggerDistance = distance;
 				} else if (!currentStop.getEntries().isEmpty()) {
-					currentEntryIndex = i - 1;
-					i = realTimeTrip.getEntries().size(); //NOSONAR
+					currentEntryIndex = i > 0 ? i - 1 : 0;
+					break;
 				} else if (smallestBiggerDistance < distance && searching) {
 					smallestBiggerDistance = distance;
 					currentEntryIndex++;
@@ -59,8 +57,6 @@ public class DefaultTripBusStopLinker implements TripBusStopLinker {
 			if (currentStop.getEntries().isEmpty()) {
 				currentEntryIndex = previousCurrentEntryIndex;
 			}
-
-			trip.getBusStopsSequence().add(new BusStopTrip(currentStop));
 		}
 	}
 
