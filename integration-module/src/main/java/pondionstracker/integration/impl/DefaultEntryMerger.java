@@ -39,6 +39,7 @@ public class DefaultEntryMerger implements EntryMerger {
 				.coord(point)
 				.idVehicle(e2.getIdVehicle())
 				.idLine(e2.getIdLine())
+				.index(e2.getIndex())
 				.build();
 	}
 

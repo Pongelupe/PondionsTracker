@@ -18,6 +18,8 @@ public class Route {
 	
 	private List<Trip> trips;
 	
+	private List<RealTimeTrip> rawTrips;
+	
 	
 	public Route(String routeId, Date date, List<Trip> trips) {
 		this.routeId = routeId;
@@ -25,5 +27,23 @@ public class Route {
 		
 		trips.forEach(t -> t.setTripDate(date));
 	}
+	
+	public List<Trip> getTrips() {
+		return trips
+				.stream()
+				.sorted((o1, o2) 
+						-> o1.getTripDepartureTime().compareTo(o2.getTripDepartureTime()))
+				.toList();
+	}
+	
+	
+	public List<Trip> getTripSortedByTheLowerCalculatedEntriesRatio() {
+		return trips
+				.stream()
+				.sorted((o1, o2) 
+						-> Double.compare(o2.getCalculatedEntriesPercentage(), o1.getCalculatedEntriesPercentage()))
+				.toList();
+	}
+	
 	
 }

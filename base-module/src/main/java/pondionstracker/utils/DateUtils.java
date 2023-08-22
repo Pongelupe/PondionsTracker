@@ -14,7 +14,7 @@ public class DateUtils {
 	
 	public LocalDateTime date2localdatetime(Date d) {return new Date(d.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();}
 	
-	public LocalDate date2localdate(Date d) {return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();}
+	public LocalDate date2localdate(Date d) {return new Date(d.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();}
 	
 	public LocalTime date2localtime(Date d) { return date2localdatetime(d)
 			.toLocalTime();}

@@ -14,15 +14,15 @@ import pondionstracker.data.providers.GTFSService;
 import pondionstracker.data.providers.RealTimeService;
 import pondionstracker.integration.TripBusStopLinker;
 import pondionstracker.integration.TripExtractor;
-import pondionstracker.integration.TripFilter;
 import pondionstracker.integration.TripMatcher;
 import pondionstracker.integration.TripMissingEntriesGenerator;
+import pondionstracker.integration.TripSelector;
 import pondionstracker.integration.impl.DefaultEntryMerger;
 import pondionstracker.integration.impl.DefaultTripBusStopLinker;
 import pondionstracker.integration.impl.DefaultTripExtractor;
-import pondionstracker.integration.impl.DefaultTripFilter;
 import pondionstracker.integration.impl.DefaultTripMatcher;
 import pondionstracker.integration.impl.DefaultTripMissingEntriesGenerator;
+import pondionstracker.integration.impl.DefaultTripSelector;
 
 @Slf4j
 @AllArgsConstructor
@@ -33,6 +33,8 @@ public class StaticRealTimeIntegrationDriver {
 	private static final double DEFAULT_DISTANCE_THRESHOLD = 0.0005d; // 50 meters
 	
 	private static final int DEFAULT_MAX_TRIP_INITIAL_DELAY = 5; // 5 minutes
+
+	private static final double DEFAULT_TRIP_MIN_PERCENTAGE_TRAVELED = 0.85; // 85%
 	
 	private final GTFSService gtfsService;
 
@@ -51,7 +53,7 @@ public class StaticRealTimeIntegrationDriver {
 	private TripMissingEntriesGenerator tripMissingEntriesGenerator = new DefaultTripMissingEntriesGenerator(new DefaultEntryMerger());
 	
 	@Builder.Default
-	private TripFilter tripFilter = new DefaultTripFilter(); 
+	private TripSelector tripSelector = new DefaultTripSelector(DEFAULT_TRIP_MIN_PERCENTAGE_TRAVELED); 
 	
 	public Route integrate(String routeShortName, Date date) {
 		var route = gtfsService.getRouteByRouteShortName(routeShortName, date)
@@ -69,24 +71,31 @@ public class StaticRealTimeIntegrationDriver {
 			.flatMap(List<RealTimeTrip>::stream)
 			.sorted((o1, o2) -> o1.getDepartureTime().compareTo(o2.getDepartureTime()))
 			.toList();
+		route.setRawTrips(realtimeTrips);
 		log.info("Summarizing {} raw trips", realtimeTrips.size());
 		
 		var matchedScheadule = tripMatcher.match(route.getTrips(), realtimeTrips);
 		var emptyScheadules = matchedScheadule.values().stream().filter(t -> !t.isEmpty()).count();
-		log.info("%d/%d ({}%%) of the scheadule filled!".formatted(matchedScheadule.size(), emptyScheadules), 
+		log.info("%d/%d ({}%%) of the scheadule filled!".formatted(emptyScheadules, matchedScheadule.size()), 
 				(double) emptyScheadules / matchedScheadule.size());
-		route.getTrips().forEach(trip -> trip.setRealTimeTrips(matchedScheadule.get(trip)));
 		
-		route.getTrips()
+		var trips = route.getTrips();
+		trips.forEach(trip -> trip.setRealTimeTrip(tripSelector.select(trip, matchedScheadule.get(trip))));
+		
+		trips
 			.stream()
+			.filter(t -> t.getRealTimeTrip() != null)
 			.parallel()
 			.forEach(t -> {
-				t.getRealTimeTrips().forEach(rtTrip -> {
-					tripBusStopLinker.link(t, rtTrip);
-					tripMissingEntriesGenerator.generateMissingEntries(t, rtTrip);
-				});
-				t.getRealTimeTrips().removeIf(rtTrip -> tripFilter.test(t, rtTrip));
+				tripBusStopLinker.link(t, t.getRealTimeTrip());
+				tripMissingEntriesGenerator.generateMissingEntries(t, t.getRealTimeTrip());
 			});
+		
+		var notEmptyScheadules = trips.stream()
+				.filter(d -> d.getRealTimeTrip() != null).count();
+		log.info("Summarizing {} valid trips", notEmptyScheadules);
+		log.info("%d/%d ({}%%) of the scheadule filled!".formatted(notEmptyScheadules, trips.size()), 
+				(double) notEmptyScheadules / trips.size());
 		
 		return route;
 		

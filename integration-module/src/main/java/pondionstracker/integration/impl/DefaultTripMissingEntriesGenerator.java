@@ -23,12 +23,13 @@ public class DefaultTripMissingEntriesGenerator implements TripMissingEntriesGen
 		var missingStops = busStopSequence
 		.stream()
 		.parallel()
-		.filter(e -> e.getEntries().isEmpty())
+		.filter(e -> e.getEntries() == null)
 		.toList();
+		var departureEntryIndex = realTimeTrip.getEntries().indexOf(realTimeTrip.getDeparture());
 		
 		for (var missingStop : missingStops) {
 			var indexStop = missingStop.getStopSequence();
-			var indexMaxEntryPreviousStop = getIndexMaxEntryPreviousStop(busStopSequence, indexStop);
+			var indexMaxEntryPreviousStop = getIndexMaxEntryPreviousStop(busStopSequence, indexStop, departureEntryIndex);
 			var indexMinRegistroPontoSeguinte = getIndexMinEntryNextStop(busStopSequence, indexStop)
 					.orElse(indexMaxEntryPreviousStop);
 			
@@ -43,10 +44,8 @@ public class DefaultTripMissingEntriesGenerator implements TripMissingEntriesGen
 			var registroMerged = merger.merge(registrosCandidatos.get(0), 
 					registrosCandidatos.get(registrosCandidatos.size() > 1 ? 1 : 0));
 			
-			var stop = trip.getBusStopsSequence().get(indexStop - 1);
-			
-			stop.getEntries().add(registroMerged);
-			stop.setCalculated(true);
+			missingStop.setEntries(List.of(registroMerged));
+			missingStop.setCalculated(true);
 		}
 		
 	}
@@ -55,9 +54,9 @@ public class DefaultTripMissingEntriesGenerator implements TripMissingEntriesGen
 		return busStopSequence
 				.stream()
 				.parallel()
-				.filter(e -> !e.getEntries().isEmpty())
+				.filter(e -> e.getEntries() != null)
 				.filter(e -> e.getStopSequence() > i)
-				.min(Comparator.comparingInt(e -> e.getStopSequence()))
+				.min(Comparator.comparingInt(BusStopTrip::getStopSequence))
 				.map(p -> p.getEntries()
 						.stream()
 						.min(Comparator.comparing(RealTimeBusEntry::getDtEntry))
@@ -66,19 +65,19 @@ public class DefaultTripMissingEntriesGenerator implements TripMissingEntriesGen
 				;
 	}
 	
-	private int getIndexMaxEntryPreviousStop(List<BusStopTrip> busStopSequence, int i) {
+	private int getIndexMaxEntryPreviousStop(List<BusStopTrip> busStopSequence, int i, int departureEntryIndex) {
 		return busStopSequence
 				.stream()
 				.parallel()
-				.filter(e -> !e.getEntries().isEmpty())
+				.filter(e -> e.getEntries() != null)
 				.filter(e -> e.getStopSequence() < i)
-				.max(Comparator.comparingInt(e -> e.getStopSequence()))
-				.orElse(busStopSequence.get(0))
-				.getEntries()
+				.max(Comparator.comparingInt(BusStopTrip::getStopSequence))
+				.map(BusStopTrip::getEntries)
+				.orElse(List.of())
 				.stream()
 				.max(Comparator.comparing(RealTimeBusEntry::getDtEntry))
 				.map(e -> e.getIndex())
-				.orElse(0);
+				.orElse(departureEntryIndex);
 	}
 	
 }

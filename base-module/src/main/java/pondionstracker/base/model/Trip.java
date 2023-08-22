@@ -36,7 +36,7 @@ public class Trip {
 	
 	private LineString geom;
 	
-	private List<RealTimeTrip> realTimeTrips;
+	private RealTimeTrip realTimeTrip;
 	
 	@Builder.Default
 	private List<BusStopTrip> busStopsSequence = new ArrayList<>();
@@ -59,6 +59,18 @@ public class Trip {
 		return busStopsSequence.stream()
 				.filter(e -> e.isCalculated())
 				.count();
+	}
+	
+	public void setRealTimeTrip(RealTimeTrip realTimeTrip) {
+		Optional.ofNullable(realTimeTrip)
+			.ifPresent(r -> {
+				var entries = realTimeTrip.getEntries();
+				for (int i = 0; i < entries.size(); i++) {
+					entries.get(i).setIndex(i);
+				}
+			});
+		
+		this.realTimeTrip = realTimeTrip;
 	}
 	
 	private Date getDateAtIndex(int index) {

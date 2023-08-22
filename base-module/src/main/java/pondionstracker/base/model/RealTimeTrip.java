@@ -50,9 +50,14 @@ public class RealTimeTrip {
 		return getLastEntry().getCurrentDistanceTraveled();
 	}
 	
-	private RealTimeBusEntry getLastEntry() {
+	public RealTimeBusEntry getLastEntry() {
 		return Optional.ofNullable(arrival)
 				.orElseGet(() -> entries.get(entries.size() -1));
+	}
+
+
+	public int getDepartureIndex() {
+		return entries.indexOf(departure);
 	}
 
 }
