@@ -31,13 +31,14 @@ public class DefaultGTFSService implements GTFSService {
 	public Optional<Route> getRouteByRouteShortName(String routeShortName, Date date) {
 		return Optional.ofNullable(queryExecutor.queryFirst(Query.GET_ROUTE_BY_ROUTE_SHORT_NAME, 
 				rs -> rs.getString(1), Map.of(Parameter.ROUTE_SHORT_NAME, routeShortName)))
-				.map(routeId -> new RouteTripRecord(routeId, getServiceId(date)))
+				.map(routeId -> new RouteTripRecord(routeId, getServiceIds(date)))
 				.map(routeTripRecord -> new Route(routeTripRecord.routeId, date,
 						getTripsByRouteIdAndServiceIds(routeTripRecord)))
 		;
 	}
 
-	public List<String> getServiceId(Date date) {
+	@Override
+	public List<String> getServiceIds(Date date) {
 		var dayOfWeek = DateUtils.getDayOfWeekFromDate(date)
 				.name().toLowerCase();
 		
@@ -51,6 +52,7 @@ public class DefaultGTFSService implements GTFSService {
 			.toList();
 	}
 
+	@Override
 	public List<Trip> getTripsByRouteIdAndServiceIds(String routeId, List<String> serviceIds) {
 		return queryExecutor.queryAll(Query.GET_TRIPS_BY_ROUTE_ID_AND_SERVICE_IDS, rs -> Trip.builder()
 				.tripId(rs.getString("trip_id"))
@@ -82,6 +84,7 @@ public class DefaultGTFSService implements GTFSService {
 				.toList();
 	}
 	
+	@Override
 	public List<StopPointsInterval> getStopPointsInterval(String tripId) {
 		return queryExecutor.queryAll(Query.GET_STOP_TIME_INVERVAL_BY_TRIP_ID, 
 				rs -> StopPointsInterval.builder()

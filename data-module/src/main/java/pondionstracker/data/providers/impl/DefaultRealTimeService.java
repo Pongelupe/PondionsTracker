@@ -25,15 +25,15 @@ public class DefaultRealTimeService implements RealTimeService {
 	protected final QueryExecutor queryExecutor;
 	
 	@Override
-	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Date date, String... idLines) {
+	public Map<String, List<RealTimeBusEntry>> getEntriesByDtEntryAndLineIds(Date date, String... idLines) {
 		var startOfTheDay = localdatetime2Date(date2localdatetime(date).with(LocalTime.MIN));
 		var endOfTheDay = localdatetime2Date(date2localdatetime(date).with(LocalTime.MAX));
 		
-		return getEntriesByIdLine(startOfTheDay, endOfTheDay, idLines);
+		return getEntriesByDtEntryAndLineIds(startOfTheDay, endOfTheDay, idLines);
 	}
 
 	@Override
-	public Map<String, List<RealTimeBusEntry>> getEntriesByIdLine(Date startDate, Date endDate, String... idLines) {
+	public Map<String, List<RealTimeBusEntry>> getEntriesByDtEntryAndLineIds(Date startDate, Date endDate, String... idLines) {
 		return queryExecutor.queryAll(Query.GET_ENTRIES, rs -> RealTimeBusEntry.builder()
 				.dtEntry(rs.getTimestamp("dt_entry"))
 				.coord((Point) ((PGgeometry) rs.getObject("coord")).getGeometry())

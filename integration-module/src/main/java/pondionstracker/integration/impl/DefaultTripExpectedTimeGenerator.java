@@ -12,18 +12,20 @@ import lombok.RequiredArgsConstructor;
 import pondionstracker.base.model.StopPointsInterval;
 import pondionstracker.base.model.Trip;
 import pondionstracker.base.model.TripScheduleEntry;
+import pondionstracker.integration.TripExpectedTimeGenerator;
 import pondionstracker.utils.DateUtils;
 
 @RequiredArgsConstructor
-public class TripExpectedTimeGenerator {
+public class DefaultTripExpectedTimeGenerator implements TripExpectedTimeGenerator {
 
+	@Override
 	public List<TripScheduleEntry> generate(Trip trip, List<StopPointsInterval> stopsIntervals) {
 		var tripSchedule = new ArrayList<TripScheduleEntry>();
 
 		var departureTime = DateUtils.date2localtime(trip.getTripDepartureTime());
 		var arrivalTime = DateUtils.date2localtime(trip.getTripArrivalTime());
 
-		var routeDuration = ChronoUnit.MINUTES.between(departureTime, arrivalTime);
+		var routeDuration = ChronoUnit.SECONDS.between(departureTime, arrivalTime) / 60d;
 		var avgSpeed = (trip.getLength() / 1000d) / (routeDuration / 60d);
 
 		var intervals = stopsIntervals.stream()
@@ -41,7 +43,7 @@ public class TripExpectedTimeGenerator {
 				var distanceBetweenStops = intervals.get(ponto.getStopSequence()).getLength();
 
 				long expectedTimeDiff = BigDecimal.valueOf(((distanceBetweenStops * 100 / avgSpeed) * 60 * 60))
-						.setScale(2, RoundingMode.UP).longValue();
+						.setScale(2, RoundingMode.DOWN).longValue();
 				expectedTime = expectedTime.plusSeconds(expectedTimeDiff);
 				
 				tripSchedule.add(new TripScheduleEntry(ponto, DateUtils.dateFromLocalTime(trip.getTripDate(), expectedTime)));

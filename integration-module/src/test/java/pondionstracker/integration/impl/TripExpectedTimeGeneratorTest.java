@@ -20,7 +20,7 @@ import pondionstracker.base.model.Trip;
  */
 class TripExpectedTimeGeneratorTest {
 	
-	private TripExpectedTimeGenerator generator;
+	private DefaultTripExpectedTimeGenerator generator;
 	
 	private Trip trip;
 	private List<StopPointsInterval> stopsIntervals;
@@ -29,7 +29,7 @@ class TripExpectedTimeGeneratorTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		generator = new TripExpectedTimeGenerator();
+		generator = new DefaultTripExpectedTimeGenerator();
 		
 		f = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		

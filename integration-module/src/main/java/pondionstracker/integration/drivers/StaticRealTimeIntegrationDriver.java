@@ -63,7 +63,7 @@ public class StaticRealTimeIntegrationDriver {
 				.formatted(routeShortName, idsLines.size(), route.getTrips().size()), 
 				date);
 		
-		var entries = realTimeService.getEntriesByIdLine(date, idsLines.toArray(new String[] {}));
+		var entries = realTimeService.getEntriesByDtEntryAndLineIds(date, idsLines.toArray(new String[] {}));
 		log.info("{} entries were retreived", 
 				entries.values().stream().flatMap(List<RealTimeBusEntry>::stream).count());
 		var realtimeTrips = entries.values().parallelStream()
