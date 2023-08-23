@@ -74,13 +74,13 @@ public class StaticRealTimeIntegrationDriver {
 		route.setRawTrips(realtimeTrips);
 		log.info("Summarizing {} raw trips", realtimeTrips.size());
 		
-		var matchedScheadule = tripMatcher.match(route.getTrips(), realtimeTrips);
-		var emptyScheadules = matchedScheadule.values().stream().filter(t -> !t.isEmpty()).count();
-		log.info("%d/%d ({}%%) of the scheadule filled!".formatted(emptyScheadules, matchedScheadule.size()), 
-				(double) emptyScheadules / matchedScheadule.size());
+		var matchedSchedule = tripMatcher.match(route.getTrips(), realtimeTrips);
+		var emptySchedules = matchedSchedule.values().stream().filter(t -> !t.isEmpty()).count();
+		log.info("%d/%d ({}%%) of the schedule filled!".formatted(emptySchedules, matchedSchedule.size()), 
+				(double) emptySchedules / matchedSchedule.size());
 		
 		var trips = route.getTrips();
-		trips.forEach(trip -> trip.setRealTimeTrip(tripSelector.select(trip, matchedScheadule.get(trip))));
+		trips.forEach(trip -> trip.setRealTimeTrip(tripSelector.select(trip, matchedSchedule.get(trip))));
 		
 		trips
 			.stream()
@@ -94,7 +94,7 @@ public class StaticRealTimeIntegrationDriver {
 		var notEmptyScheadules = trips.stream()
 				.filter(d -> d.getRealTimeTrip() != null).count();
 		log.info("Summarizing {} valid trips", notEmptyScheadules);
-		log.info("%d/%d ({}%%) of the scheadule filled!".formatted(notEmptyScheadules, trips.size()), 
+		log.info("%d/%d ({}%%) of the schedule filled!".formatted(notEmptyScheadules, trips.size()), 
 				(double) notEmptyScheadules / trips.size());
 		
 		return route;
