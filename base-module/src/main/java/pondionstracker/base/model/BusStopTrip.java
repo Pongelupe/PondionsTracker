@@ -33,8 +33,6 @@ public class BusStopTrip {
 	
 	private boolean calculated;
 	
-	private Double distance;
-	
 	public Date getRealTime() {
 		return Optional.ofNullable(entries)
 				.map(e ->  e.get(entries.size() - 1).getDtEntry())

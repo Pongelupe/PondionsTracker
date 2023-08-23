@@ -45,7 +45,6 @@ public class DefaultTripBusStopLinker implements TripBusStopLinker {
 				if (distance <= distanceThreshold
 						&& ((currentStopDirection == entryDirection) || (entries.isEmpty() && !currentStopDirection))) {
 					entries.add(entry);
-					currentStop.setDistance(distance);
 					currentEntryIndex = i;
 					smallestBiggerDistance = distance;
 				} else if (!entries.isEmpty()) {

@@ -64,12 +64,12 @@ class TripExpectedTimeGeneratorTest {
 		
 		assertEquals(trip.getBusStopsSequence().size(), schedule.size());
 		
-		assertEquals("11/08/2023 10:00:00", f.format(schedule.get(0).getDate()));
-		assertEquals("11/08/2023 10:02:05", f.format(schedule.get(1).getDate()));
-		assertEquals("11/08/2023 10:05:50", f.format(schedule.get(2).getDate()));
-		assertEquals("11/08/2023 10:07:30", f.format(schedule.get(3).getDate()));
-		assertEquals("11/08/2023 10:12:30", f.format(schedule.get(4).getDate()));
-		assertEquals("11/08/2023 10:15:00", f.format(schedule.get(5).getDate()));
+		assertEquals("11/08/2023 10:00:00", f.format(schedule.get(0).getExpectedTime()));
+		assertEquals("11/08/2023 10:02:05", f.format(schedule.get(1).getExpectedTime()));
+		assertEquals("11/08/2023 10:05:50", f.format(schedule.get(2).getExpectedTime()));
+		assertEquals("11/08/2023 10:07:30", f.format(schedule.get(3).getExpectedTime()));
+		assertEquals("11/08/2023 10:12:30", f.format(schedule.get(4).getExpectedTime()));
+		assertEquals("11/08/2023 10:15:00", f.format(schedule.get(5).getExpectedTime()));
 	}
 
 }

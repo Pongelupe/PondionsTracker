@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public enum BusStatusAtStop {
 
-	DELAYED, ON_TIME, AHEAD_OF_SCHEDULE, UNKOWN;
+	AHEAD_OF_SCHEDULE, DELAYED, ON_TIME, UNKOWN;
 	
 	public static BusStatusAtStop ofDiffTimestamp(Long diff) {
 		return Optional.ofNullable(diff)

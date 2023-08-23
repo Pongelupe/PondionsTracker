@@ -9,9 +9,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import pondionstracker.base.model.BusStopTrip;
 import pondionstracker.base.model.StopPointsInterval;
 import pondionstracker.base.model.Trip;
-import pondionstracker.base.model.TripScheduleEntry;
 import pondionstracker.integration.TripExpectedTimeGenerator;
 import pondionstracker.utils.DateUtils;
 
@@ -19,8 +19,8 @@ import pondionstracker.utils.DateUtils;
 public class DefaultTripExpectedTimeGenerator implements TripExpectedTimeGenerator {
 
 	@Override
-	public List<TripScheduleEntry> generate(Trip trip, List<StopPointsInterval> stopsIntervals) {
-		var tripSchedule = new ArrayList<TripScheduleEntry>();
+	public List<BusStopTrip> generate(Trip trip, List<StopPointsInterval> stopsIntervals) {
+		var tripSchedule = new ArrayList<BusStopTrip>();
 
 		var departureTime = DateUtils.date2localtime(trip.getTripDepartureTime());
 		var arrivalTime = DateUtils.date2localtime(trip.getTripArrivalTime());
@@ -31,8 +31,10 @@ public class DefaultTripExpectedTimeGenerator implements TripExpectedTimeGenerat
 		var intervals = stopsIntervals.stream()
 				.collect(Collectors.toMap(StopPointsInterval::getStopSequence2, Function.identity()));
 
-		tripSchedule.add(new TripScheduleEntry(trip.getBusStopsSequence().get(0), 
-				DateUtils.dateFromLocalTime(trip.getTripDate(), departureTime)));
+		var firstBusStop = trip.getBusStopsSequence().get(0);
+		firstBusStop.setExpectedTime(DateUtils.dateFromLocalTime(trip.getTripDate(), 
+				departureTime));
+		tripSchedule.add(firstBusStop);
 		
 		var expectedTime = departureTime;
 
@@ -43,10 +45,11 @@ public class DefaultTripExpectedTimeGenerator implements TripExpectedTimeGenerat
 				var distanceBetweenStops = intervals.get(ponto.getStopSequence()).getLength();
 
 				long expectedTimeDiff = BigDecimal.valueOf(((distanceBetweenStops * 100 / avgSpeed) * 60 * 60))
-						.setScale(2, RoundingMode.DOWN).longValue();
+						.setScale(2, RoundingMode.HALF_UP).longValue();
 				expectedTime = expectedTime.plusSeconds(expectedTimeDiff);
 				
-				tripSchedule.add(new TripScheduleEntry(ponto, DateUtils.dateFromLocalTime(trip.getTripDate(), expectedTime)));
+				ponto.setExpectedTime(DateUtils.dateFromLocalTime(trip.getTripDate(), expectedTime));
+				tripSchedule.add(ponto);
 			}
 
 		}
