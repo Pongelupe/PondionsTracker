@@ -15,7 +15,7 @@ import pondionstracker.utils.DateUtils;
 @RequiredArgsConstructor
 public class DefaultTripMatcher implements TripMatcher {
 
-	private final int maxTripInitialDelay;
+	private final int maxTripInitialShifting;
 	
 	@Override
 	public Map<Trip, List<RealTimeTrip>> match(List<Trip> trips, List<RealTimeTrip> realTimeTrips) {
@@ -32,7 +32,7 @@ public class DefaultTripMatcher implements TripMatcher {
 				
 				long diff = ChronoUnit.MINUTES.between(tripDepartureTime, departureTime);
 				
-				if (Math.abs(diff) <= maxTripInitialDelay) {
+				if (Math.abs(diff) <= maxTripInitialShifting) {
 					currentRealTimeTripIndex = i + 1;
 					tripCanditates.add(currentRealTimeTrip);
 				}
