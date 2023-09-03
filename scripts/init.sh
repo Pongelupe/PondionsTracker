@@ -3,9 +3,13 @@
 export PGUSER=pondionstracker
 export PGPASSWORD=pondionstracker
 export PGDATABASE=pondionstracker
+export PGHOST=localhost
 
-cat sql/schema.sql | psql -h localhost -b
+GTFS=$1
+SCHEMA=$2
 
-gtfs-to-sql -u gtfs-bh/*.txt --schema pondionstracker | sponge | psql -h localhost -b
+cat sql/schema.sql | psql -b
 
-cat sql/shapes_geoms_populate.sql | psql -h localhost -b
+gtfs-to-sql -u $GTFS/*.txt --schema $SCHEMA | sponge | psql -b
+
+cat sql/shapes_summarized_populate.sql | psql -b

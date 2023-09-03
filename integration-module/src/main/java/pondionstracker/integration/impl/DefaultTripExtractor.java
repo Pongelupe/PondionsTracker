@@ -52,7 +52,7 @@ public class DefaultTripExtractor implements TripExtractor {
 				trip.getEntries().add(entry);
 				
 			} else {
-				// the trip has ended
+				// the trip has finished
 				arrival = previousEntry;
 				currentDistanceTraveled = entry.getCurrentDistanceTraveled();
 			}

@@ -13,12 +13,14 @@ import pondionstracker.base.model.Route;
 import pondionstracker.data.providers.GTFSService;
 import pondionstracker.data.providers.RealTimeService;
 import pondionstracker.integration.TripBusStopLinker;
+import pondionstracker.integration.TripExpectedTimeGenerator;
 import pondionstracker.integration.TripExtractor;
 import pondionstracker.integration.TripMatcher;
 import pondionstracker.integration.TripMissingEntriesGenerator;
 import pondionstracker.integration.TripSelector;
 import pondionstracker.integration.impl.DefaultEntryMerger;
 import pondionstracker.integration.impl.DefaultTripBusStopLinker;
+import pondionstracker.integration.impl.DefaultTripExpectedTimeGenerator;
 import pondionstracker.integration.impl.DefaultTripExtractor;
 import pondionstracker.integration.impl.DefaultTripMatcher;
 import pondionstracker.integration.impl.DefaultTripMissingEntriesGenerator;
@@ -30,9 +32,9 @@ import pondionstracker.integration.impl.DefaultTripSelector;
 @Builder
 public class StaticRealTimeIntegrationDriver {
 	
-	private static final double DEFAULT_DISTANCE_THRESHOLD = 0.0005d; // 50 meters
-	
 	private static final int DEFAULT_MAX_TRIP_INITIAL_DELAY = 5; // 5 minutes
+	
+	private static final double DEFAULT_DISTANCE_THRESHOLD = 0.0005d; // 50 meters
 
 	private static final double DEFAULT_TRIP_MIN_PERCENTAGE_TRAVELED = 0.85; // 85%
 	
@@ -40,6 +42,9 @@ public class StaticRealTimeIntegrationDriver {
 
 	private final RealTimeService realTimeService;
 
+	@Builder.Default
+	private TripExpectedTimeGenerator tripExpectedTimeGenerator = new DefaultTripExpectedTimeGenerator();
+	
 	@Builder.Default
 	private TripExtractor tripExtractor = new DefaultTripExtractor();
 
@@ -58,19 +63,28 @@ public class StaticRealTimeIntegrationDriver {
 	public Route integrate(String routeShortName, Date date) {
 		var route = gtfsService.getRouteByRouteShortName(routeShortName, date)
 				.orElseThrow();
+		if (hasToGenerateExpectedTime(route)) {
+			 route.getTrips()
+			 	.forEach(trip -> {
+			 		var stopsIntervals = gtfsService.getStopPointsInterval(trip.getTripId());
+			 		tripExpectedTimeGenerator.generate(trip, stopsIntervals);
+			 	});
+		}
+		
+		
 		var idsLines = realTimeService.getIdsLineByRouteId(route.getRouteId());
 		log.info("Route %s has %d idsLines and %s trips at {}"
 				.formatted(routeShortName, idsLines.size(), route.getTrips().size()), 
 				date);
-		
 		var entries = realTimeService.getEntriesByDtEntryAndLineIds(date, idsLines.toArray(new String[] {}));
 		log.info("{} entries were retreived", 
 				entries.values().stream().flatMap(List<RealTimeBusEntry>::stream).count());
-		var realtimeTrips = entries.values().parallelStream()
-			.map(tripExtractor::extract)
-			.flatMap(List<RealTimeTrip>::stream)
-			.sorted((o1, o2) -> o1.getDepartureTime().compareTo(o2.getDepartureTime()))
-			.toList();
+		var realtimeTrips = entries.values()
+				.parallelStream()
+				.map(tripExtractor::extract)
+				.flatMap(List<RealTimeTrip>::stream)
+				.sorted((o1, o2) -> o1.getDepartureTime().compareTo(o2.getDepartureTime()))
+				.toList();
 		route.setRawTrips(realtimeTrips);
 		log.info("Summarizing {} raw trips", realtimeTrips.size());
 		
@@ -99,6 +113,11 @@ public class StaticRealTimeIntegrationDriver {
 		
 		return route;
 		
+	}
+
+	private boolean hasToGenerateExpectedTime(Route route) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }
