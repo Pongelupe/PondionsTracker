@@ -18,7 +18,7 @@ import pondionstracker.base.model.Trip;
  * @author ppongelupe
  *
  */
-class TripExpectedTimeGeneratorTest {
+class DefaultTripExpectedTimeGeneratorTest {
 	
 	private DefaultTripExpectedTimeGenerator generator;
 	
