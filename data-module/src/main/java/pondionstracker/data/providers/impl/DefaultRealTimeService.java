@@ -34,7 +34,9 @@ public class DefaultRealTimeService implements RealTimeService {
 
 	@Override
 	public Map<String, List<RealTimeBusEntry>> getEntriesByDtEntryAndLineIds(Date startDate, Date endDate, String... idLines) {
-		return queryExecutor.queryAll(Query.GET_ENTRIES, rs -> RealTimeBusEntry.builder()
+		var idLinesList = List.of(idLines);
+		return idLinesList.isEmpty() ? Map.of() : 
+				queryExecutor.queryAll(Query.GET_ENTRIES, rs -> RealTimeBusEntry.builder()
 				.dtEntry(rs.getTimestamp("dt_entry"))
 				.coord((Point) ((PGgeometry) rs.getObject("coord")).getGeometry())
 				.idVehicle(rs.getString("id_vehicle"))
@@ -42,7 +44,7 @@ public class DefaultRealTimeService implements RealTimeService {
 				.currentDistanceTraveled(rs.getInt("current_distance_traveled"))
 				.build(), Map.of(Parameter.DATE_START, DateUtils.getSqlTimestamp(startDate),
 						Parameter.DATE_END, DateUtils.getSqlTimestamp(endDate),
-						Parameter.LINE_ID, List.of(idLines)))
+						Parameter.LINE_ID, idLinesList))
 				.stream()
 				.collect(Collectors.groupingBy(RealTimeBusEntry::getIdVehicle));
 	}

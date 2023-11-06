@@ -80,6 +80,7 @@ public class DefaultGTFSService implements GTFSService {
 					return trip;
 				})
 				.sequential()
+				.filter(e -> e.getTripDepartureTime() != null)
 				.sorted((o1, o2) -> o1.getTripDepartureTime().compareTo(o2.getTripDepartureTime()))
 				.toList();
 	}

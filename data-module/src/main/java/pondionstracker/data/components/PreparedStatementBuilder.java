@@ -16,7 +16,6 @@ import org.apache.commons.io.IOUtils;
 
 import lombok.SneakyThrows;
 import pondionstracker.data.constants.Query.Parameter;
-import pondionstracker.data.exceptions.QueryNotFoundException;
 import pondionstracker.data.exceptions.SQLParameterNotFound;
 
 public class PreparedStatementBuilder {
@@ -111,7 +110,7 @@ public class PreparedStatementBuilder {
 		try (var is = this.getClass().getResourceAsStream(filePath)) {
 			return IOUtils.toString(is, Charset.defaultCharset());
 		} catch (Exception e) {
-			throw new QueryNotFoundException(filename, e);
+			return filename;
 		}
 	}
 	
