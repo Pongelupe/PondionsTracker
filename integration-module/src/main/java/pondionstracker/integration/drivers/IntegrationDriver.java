@@ -2,6 +2,7 @@ package pondionstracker.integration.drivers;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,8 +31,10 @@ import pondionstracker.integration.impl.DefaultTripSelector;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
-public class StaticRealTimeIntegrationDriver {
+public class IntegrationDriver {
 	
+	private static final int MIN_REQUIRED_EXPECTED_TIME_GTFS = 2;
+
 	private static final int DEFAULT_MAX_TRIP_INITIAL_DELAY = 5; // 5 minutes
 	
 	private static final double DEFAULT_DISTANCE_THRESHOLD = 0.0005d; // 50 meters
@@ -116,8 +119,14 @@ public class StaticRealTimeIntegrationDriver {
 	}
 
 	private boolean hasToGenerateExpectedTime(Route route) {
-		// TODO Auto-generated method stub
-		return false;
+		return route.getTrips()
+			.stream()
+			.anyMatch(t -> t.getBusStopsSequence()
+					.stream()
+					.map(e -> e.getExpectedTime())
+					.filter(Objects::nonNull)
+					.count() < MIN_REQUIRED_EXPECTED_TIME_GTFS
+					);
 	}
 	
 }
