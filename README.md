@@ -12,3 +12,33 @@ This project is organized into several modules:
 | **data-module** | Handles data persistence, modeling, and database access |
 | **integration-module** | Implements integrations with external GTFS‑RT data sources |
 | **scripts** | Contains helper scripts and automation tools |
+
+## ⚙️  Using modules
+
+### base-module
+```
+<!-- https://mvnrepository.com/artifact/io.github.pongelupe/base-module -->
+<dependency>
+    <groupId>io.github.pongelupe</groupId>
+    <artifactId>base-module</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+### data-module
+```
+<!-- https://mvnrepository.com/artifact/io.github.pongelupe/data-module -->
+<dependency>
+    <groupId>io.github.pongelupe</groupId>
+    <artifactId>data-module</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+### integration-module
+```
+<!-- https://mvnrepository.com/artifact/io.github.pongelupe/integration-module -->
+<dependency>
+    <groupId>io.github.pongelupe</groupId>
+    <artifactId>integration-module</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
