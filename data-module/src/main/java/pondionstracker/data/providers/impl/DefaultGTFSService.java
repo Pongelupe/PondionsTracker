@@ -30,7 +30,7 @@ public class DefaultGTFSService implements GTFSService {
 	@Override
 	public Optional<Route> getRouteByRouteShortName(String routeShortName, Date date) {
 		return Optional.ofNullable(queryExecutor.queryFirst(Query.GET_ROUTE_BY_ROUTE_SHORT_NAME, 
-				rs -> rs.getString(1), Map.of(Parameter.ROUTE_SHORT_NAME, routeShortName)))
+				rs -> rs.getString(1), Map.of(Parameter.ROUTE_SHORT_NAME.name(), routeShortName)))
 				.map(routeId -> new RouteTripRecord(routeId, getServiceIds(date)))
 				.map(routeTripRecord -> new Route(routeTripRecord.routeId, date,
 						getTripsByRouteIdAndServiceIds(routeTripRecord)))
@@ -45,7 +45,7 @@ public class DefaultGTFSService implements GTFSService {
 		return queryExecutor.queryAll(Query.GET_CALENDAR_BY_DATE, rs -> 
 			new DayOfWeekServiceDTO(rs.getString("service_id"),
 				rs.getString(dayOfWeek)), 
-			Map.of(Parameter.DATE, DateUtils.getSqlDate(date)))
+			Map.of(Parameter.DATE.name(), DateUtils.getSqlDate(date)))
 			.stream()
 			.filter(dow -> "available".equals(dow.getDayOfWeek()))
 			.map(DayOfWeekServiceDTO::getServiceId)
@@ -61,8 +61,8 @@ public class DefaultGTFSService implements GTFSService {
 				.tripHeadsign(rs.getString("trip_headsign"))
 				.geom((LineString) ((PGgeometry) rs.getObject("shape_ls")).getGeometry())
 				.length(rs.getDouble("length"))
-				.build(), Map.of(Parameter.ROUTE_ID, routeId,
-						Parameter.SERVCICE_IDS, serviceIds))
+				.build(), Map.of(Parameter.ROUTE_ID.name(), routeId,
+						Parameter.SERVCICE_IDS.name(), serviceIds))
 				.stream()
 				.parallel()
 				.map(trip -> {
@@ -73,7 +73,7 @@ public class DefaultGTFSService implements GTFSService {
 					.expectedTime(rs.getTime("arrival_time"))
 					.coord((Point) ((PGgeometry) rs.getObject("stop_loc")).getGeometry())
 					.build()
-					, Map.of(Parameter.TRIP_ID, trip.getTripId()));
+					, Map.of(Parameter.TRIP_ID.name(), trip.getTripId()));
 					
 					trip.setBusStopsSequence(stops);
 					
@@ -92,7 +92,7 @@ public class DefaultGTFSService implements GTFSService {
 			.stopSequence1(rs.getInt(1))
 			.stopSequence2(rs.getInt(2))
 			.length(rs.getDouble(3))
-		.build(), Map.of(Parameter.TRIP_ID, tripId));
+		.build(), Map.of(Parameter.TRIP_ID.name(), tripId));
 	}
 	
 	private List<Trip> getTripsByRouteIdAndServiceIds(RouteTripRecord r) {

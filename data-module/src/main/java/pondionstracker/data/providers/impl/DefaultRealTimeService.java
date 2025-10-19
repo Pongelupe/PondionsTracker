@@ -42,9 +42,9 @@ public class DefaultRealTimeService implements RealTimeService {
 				.idVehicle(rs.getString("id_vehicle"))
 				.idLine(rs.getString("id_line"))
 				.currentDistanceTraveled(rs.getInt("current_distance_traveled"))
-				.build(), Map.of(Parameter.DATE_START, DateUtils.getSqlTimestamp(startDate),
-						Parameter.DATE_END, DateUtils.getSqlTimestamp(endDate),
-						Parameter.LINE_ID, idLinesList))
+				.build(), Map.of(Parameter.DATE_START.name(), DateUtils.getSqlTimestamp(startDate),
+						Parameter.DATE_END.name(), DateUtils.getSqlTimestamp(endDate),
+						Parameter.LINE_ID.name(), idLinesList))
 				.stream()
 				.collect(Collectors.groupingBy(RealTimeBusEntry::getIdVehicle));
 	}

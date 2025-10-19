@@ -15,23 +15,22 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 
 import lombok.SneakyThrows;
-import pondionstracker.data.constants.Query.Parameter;
 import pondionstracker.data.exceptions.SQLParameterNotFound;
 
 public class PreparedStatementBuilder {
 	
-	private static final Pattern REGEX_PARAMETERS = Pattern.compile("\\:(?!.*geometry)\\w+");
+	private static final Pattern REGEX_PARAMETERS = Pattern.compile("(?<!:)\\:(?!.*geometry)\\w+");
 
 	private static final String SQL_EXT = ".sql";
 	private static final String CLASSPATH_SQL_FOLDER = "/sql/"; //NOSONAR
 	
 	private final Connection conn;
 	private final String query; 
-	private final Map<Parameter, Object> originalParameters;
+	private final Map<String, Object> originalParameters;
 	
 	private List<Object> parameters;
 	
-	public PreparedStatementBuilder(Connection conn, String query, Map<Parameter, Object> parameters) {
+	public PreparedStatementBuilder(Connection conn, String query, Map<String, Object> parameters) {
 		this.conn = conn;
 		this.query = query;
 		this.originalParameters = parameters;
@@ -54,7 +53,7 @@ public class PreparedStatementBuilder {
 		var matcher = REGEX_PARAMETERS.matcher(loadQuery(query));
 		
 		while (matcher.find()) {
-			var parameter = Parameter.valueOf(matcher.group().substring(1));
+			var parameter = matcher.group().substring(1);
 			
 			if (originalParameters.containsKey(parameter)) {
 				processParameterValue(originalParameters.get(parameter), sb, matcher);

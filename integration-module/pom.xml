@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.github.pongelupe</groupId>
 		<artifactId>pondionstracker-parent</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 
 	<properties>
@@ -69,12 +69,12 @@
 		<dependency>
 			<groupId>io.github.pongelupe</groupId>
 			<artifactId>base-module</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.pongelupe</groupId>
 			<artifactId>data-module</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 	</dependencies>
 </project>
