@@ -5,14 +5,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import lombok.RequiredArgsConstructor;
+import javax.sql.DataSource;
+
 import lombok.SneakyThrows;
 import pondionstracker.data.constants.Query;
 
-@RequiredArgsConstructor
 public class QueryExecutor {
 
+	private final DataSource dataSource;
 	private final Connection conn;
+	
+	public QueryExecutor(DataSource dataSource) {
+		this.dataSource = dataSource;
+		this.conn = null;
+	}
+	
+	public QueryExecutor(Connection conn) {
+		this.dataSource = null;
+		this.conn = conn;
+	}
 	
 	public <T> T queryFirst(Query query, RowMapper<T> mapper, Map<String, Object> parameters) {
 		return queryFirst(query.name(), mapper, parameters);
@@ -29,7 +40,17 @@ public class QueryExecutor {
 
 	@SneakyThrows
 	public <T> List<T> queryAll(String query, RowMapper<T> mapper, Map<String, Object> parameters) {
-		var stmt = new PreparedStatementBuilder(conn, query, parameters).build();
+		if (dataSource != null) {
+			try (var connection = dataSource.getConnection()) {
+				return executeQuery(connection, query, mapper, parameters);
+			}
+		}
+		return executeQuery(conn, query, mapper, parameters);
+	}
+	
+	@SneakyThrows
+	private <T> List<T> executeQuery(Connection connection, String query, RowMapper<T> mapper, Map<String, Object> parameters) {
+		var stmt = new PreparedStatementBuilder(connection, query, parameters).build();
 		var rs = stmt.executeQuery();
 		
 		var result = new ArrayList<T>();
